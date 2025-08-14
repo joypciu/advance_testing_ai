@@ -35,21 +35,48 @@ class UserFactory(factory.Factory):
 class DatabaseService:
     """Simple database service for testing"""
     
-    def __init__(self, db_path=':memory:'):
-        self.db_path = db_path
+    def __init__(self, db_path=None):
+        if db_path is None:
+            # Create a temporary file for the database
+            import tempfile
+            import os
+            self.temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.db')
+            self.db_path = self.temp_file.name
+            self.temp_file.close()
+        else:
+            self.db_path = db_path
         self.setup_database()
     
     def setup_database(self):
         """Create tables"""
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute('''
-                CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    email TEXT UNIQUE NOT NULL,
-                    age INTEGER
-                )
-            ''')
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                conn.execute('''
+                    CREATE TABLE IF NOT EXISTS users (
+                        id INTEGER PRIMARY KEY,
+                        name TEXT NOT NULL,
+                        email TEXT UNIQUE NOT NULL,
+                        age INTEGER
+                    )
+                ''')
+                conn.commit()
+                # Verify table was created
+                cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
+                result = cursor.fetchone()
+                if not result:
+                    raise Exception("Failed to create users table")
+        except Exception as e:
+            print(f"Database setup error: {e}")
+            raise
+    
+    def cleanup(self):
+        """Clean up temporary database file"""
+        if hasattr(self, 'temp_file') and hasattr(self, 'db_path'):
+            import os
+            try:
+                os.unlink(self.db_path)
+            except:
+                pass
     
     def create_user(self, name, email, age):
         """Create a user"""
@@ -82,7 +109,9 @@ class TestDatabaseBlackBox:
     @pytest.fixture
     def db_service(self):
         """Create database service for testing"""
-        return DatabaseService()
+        service = DatabaseService()
+        yield service
+        service.cleanup()
     
     def test_create_user_with_factory(self, db_service):
         """Test user creation using Factory Boy"""

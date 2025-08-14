@@ -42,7 +42,7 @@ class BackendTestRunner:
         """Run API black box tests"""
         command = [
             "pytest", 
-            "tests/backend/blackbox/test_api_simple.py",
+            "backend/blackbox/test_api_simple.py",
             "-v",
             "--html=reports/api-tests.html",
             "--self-contained-html"
@@ -53,7 +53,7 @@ class BackendTestRunner:
         """Run database tests with Factory Boy"""
         command = [
             "pytest", 
-            "tests/backend/blackbox/test_database_simple.py",
+            "backend/blackbox/test_database_simple.py",
             "-v",
             "--html=reports/database-tests.html",
             "--self-contained-html"
@@ -64,20 +64,18 @@ class BackendTestRunner:
         """Run unit tests with mocking"""
         command = [
             "pytest", 
-            "tests/backend/whitebox/test_unit_simple.py",
+            "backend/whitebox/test_unit_simple.py",
             "-v",
-            "--cov=tests/backend/whitebox",
-            "--cov-report=html:reports/coverage",
             "--html=reports/unit-tests.html",
             "--self-contained-html"
         ]
-        return self.run_command(command, "Unit Tests with Coverage")
+        return self.run_command(command, "Unit Tests")
     
     def run_integration_tests(self) -> bool:
         """Run integration tests"""
         command = [
             "pytest", 
-            "tests/backend/test_integration_simple.py",
+            "backend/test_integration_simple.py",
             "-v",
             "--html=reports/integration-tests.html",
             "--self-contained-html"
@@ -88,11 +86,8 @@ class BackendTestRunner:
         """Run all backend tests"""
         command = [
             "pytest", 
-            "tests/backend/",
+            "backend/",
             "-v",
-            "--cov=tests/backend",
-            "--cov-report=html:reports/full-coverage",
-            "--cov-report=term-missing",
             "--html=reports/all-backend-tests.html",
             "--self-contained-html"
         ]
@@ -101,7 +96,7 @@ class BackendTestRunner:
     def run_security_scan(self) -> bool:
         """Run security scan"""
         commands = [
-            (["bandit", "-r", "tests/backend/", "-f", "txt"], "Security Scan"),
+            (["bandit", "-r", "backend/", "-f", "txt"], "Security Scan"),
             (["safety", "check"], "Dependency Security Check")
         ]
         
