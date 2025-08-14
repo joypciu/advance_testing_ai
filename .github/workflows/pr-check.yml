@@ -1,0 +1,88 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12']  # Only test latest versions for PRs
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Create reports directory
+      run: mkdir -p reports
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Install Playwright browsers
+      run: playwright install --with-deps
+    
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Run backend tests (quick)
+      run: |
+        pytest tests/backend/ -v --html=reports/backend-pr-report.html --self-contained-html
+      env:
+        CI: true
+    
+    - name: Run integration tests (quick)
+      run: |
+        pytest tests/integration/ -v --html=reports/integration-pr-report.html --self-contained-html
+      env:
+        CI: true
+    
+    - name: Upload test reports
+      uses: actions/upload-artifact@v4
+      if: failure()  # Only upload on failure for debugging
+      with:
+        name: pr-test-reports-${{ matrix.python-version }}
+        path: reports/
+        retention-days: 7
+
+  security-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    
+    - name: Install security tools
+      run: |
+        pip install bandit safety
+    
+    - name: Run Bandit security scan
+      run: |
+        bandit -r . -f txt
+    
+    - name: Run Safety check
+      run: |
+        safety check
