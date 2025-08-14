@@ -1,6 +1,24 @@
+# Core testing framework
 playwright==1.41.1
 pytest==8.4.1
 pytest-playwright==0.4.3
 locust==2.38.1
 python-dotenv==1.0.0
 google-genai==1.29.0
+
+# Backend Testing - Essential packages only
+requests==2.31.0
+responses==0.24.1
+pytest-mock==3.12.0
+factory-boy==3.3.0
+faker==20.1.0
+
+# Code Coverage and Quality
+coverage==7.3.2
+pytest-cov==4.1.0
+pytest-html==4.1.1
+pytest-xdist==3.5.0
+
+# Security Testing
+bandit==1.7.5
+safety==2.3.5

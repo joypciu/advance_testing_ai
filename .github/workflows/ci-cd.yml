@@ -61,6 +61,24 @@ jobs:
       env:
         CI: true
     
+    - name: Run backend black box tests
+      run: |
+        pytest tests/backend/blackbox/ -v --html=reports/backend-blackbox-report.html --self-contained-html
+      env:
+        CI: true
+    
+    - name: Run backend white box tests
+      run: |
+        pytest tests/backend/whitebox/ -v --cov=tests/backend --cov-report=xml --cov-report=html --html=reports/backend-whitebox-report.html --self-contained-html
+      env:
+        CI: true
+    
+    - name: Run backend service integration tests
+      run: |
+        pytest tests/backend/test_service_integration.py -v --html=reports/service-integration-report.html --self-contained-html
+      env:
+        CI: true
+    
     - name: Upload test reports
       uses: actions/upload-artifact@v3
       if: always()

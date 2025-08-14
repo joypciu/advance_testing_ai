@@ -2,50 +2,157 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+*.pyd
 
 # Distribution / packaging
 dist/
 build/
 *.egg-info/
+*.egg
+*.whl
 
 # Virtual environment
 venv/
 env/
 ENV/
+.venv/
+.env/
 
 # Environment variables
 .env
 *.env
+.env.local
+.env.development
+.env.test
+.env.production
 
 # IDE specific files
 .idea/
 .vscode/
 *.swp
 *.swo
+*.sublime-project
+*.sublime-workspace
+.spyderproject
+.spyproject
+*.code-workspace
 
 # Test cache and reports
 .pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
 test-results/
 playwright-report/
 **/test-results/
 **/playwright-report/
 **/pytest_html_report.html
+reports/
+*.html
+*.xml
+junit.xml
+coverage.xml
+pytest-report.html
+.tox/
+.nox/
+
+# Backend testing specific
+*.db
+*.sqlite
+*.sqlite3
+pacts/
+*.pact
+bandit-report.*
+safety-report.*
+.factory_boy_*
+test_*.db
+test_*.sqlite*
 
 # Logs
 *.log
 app.log
 test.log
 debug.log
+*.log.*
 
 # Browser data
 .playwright-browser-data/
+.playwright/
 
 # Locust
 .locust-stats/
 locust_stats.csv
+locust-report.html
 
-# Other
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+~*
+.#*
+#*#
+
+# OS specific
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
+
+# Docker
+.dockerignore
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# Poetry
+poetry.lock
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# AI/ML specific
+*.model
+*.pkl
+*.pickle
+models/
+checkpoints/
+
+# Qodo specific
+.qodo/

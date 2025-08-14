@@ -17,6 +17,7 @@ This project implements a comprehensive testing suite that covers integration, s
   - [Integration Tests](#integration-tests)
   - [Security Tests](#security-tests)
   - [Performance Tests](#performance-tests)
+  - [Backend Tests](#backend-tests)
 - [Running Tests](#running-tests)
 - [Customization](#customization)
 - [Best Practices](#best-practices)
@@ -65,6 +66,17 @@ advance-integration-ui-automation/
 │   └── workflows/
 │       └── ci-cd.yml        # GitHub Actions CI/CD pipeline
 ├── tests/
+│   ├── backend/             # Backend testing suite
+│   │   ├── blackbox/        # Black box testing
+│   │   │   ├── __init__.py
+│   │   │   ├── test_api_endpoints.py
+│   │   │   └── test_database.py
+│   │   ├── whitebox/        # White box testing
+│   │   │   ├── __init__.py
+│   │   │   ├── test_code_coverage.py
+│   │   │   └── test_unit_testing.py
+│   │   ├── __init__.py
+│   │   └── test_service_integration.py
 │   ├── integration/          # Integration tests
 │   │   ├── __init__.py
 │   │   └── test_sauce_demo.py
@@ -80,6 +92,7 @@ advance-integration-ui-automation/
 ├── reports/                 # Generated test reports
 ├── Dockerfile              # Docker container configuration
 ├── docker-compose.yml      # Docker Compose for local development
+├── .dockerignore           # Docker ignore file
 ├── requirements.txt
 └── README.md
 ```
@@ -89,6 +102,7 @@ advance-integration-ui-automation/
 This project includes a comprehensive CI/CD pipeline using GitHub Actions that automatically:
 
 ### Continuous Integration (CI)
+
 - **Multi-Python Version Testing**: Tests against Python 3.8, 3.9, 3.10, 3.11, and 3.12
 - **Code Quality**: Runs flake8 linting to ensure code quality
 - **Test Execution**: Runs integration and security tests automatically
@@ -97,18 +111,21 @@ This project includes a comprehensive CI/CD pipeline using GitHub Actions that a
 - **Performance Testing**: Runs automated performance tests on main branch
 
 ### Continuous Deployment (CD)
+
 - **Docker Build**: Builds and pushes Docker images to Docker Hub
 - **Staging Deployment**: Deploys to staging environment for testing
 - **Production Deployment**: Deploys to production after all tests pass
 - **Smoke Tests**: Runs post-deployment verification tests
 
 ### Pipeline Triggers
+
 - **Push Events**: Triggers on pushes to `main` and `develop` branches
 - **Pull Requests**: Runs full test suite on PRs to `main` and `develop`
 - **Scheduled Runs**: Daily automated test runs at 2 AM UTC
 - **Manual Triggers**: Can be triggered manually from GitHub Actions UI
 
 ### Artifacts and Reports
+
 - Test reports (HTML format)
 - Coverage reports
 - Security scan results
@@ -153,6 +170,7 @@ docker run --rm -p 8089:8089 -v $(pwd)/reports:/app/reports web-testing-suite \
 ```
 
 ### Docker Features
+
 - **Multi-stage builds** for optimized image size
 - **Non-root user** for enhanced security
 - **Cached dependencies** for faster builds
@@ -225,6 +243,62 @@ locust -f locustfile.py --host=https://your-website.com
    - Number of users
    - Spawn rate
    - Run time
+
+### Backend Tests
+
+Clean, focused backend testing using essential packages.
+
+#### Black Box Testing (`tests/backend/blackbox/`)
+
+**API Testing** (`test_api_simple.py`):
+
+- RESTful API endpoint testing with real and mocked responses
+- Error handling and performance validation
+- Uses `requests` and `responses` packages
+
+**Database Testing** (`test_database_simple.py`):
+
+- SQLite database operations (CRUD)
+- Automatic test data generation with Factory Boy
+- Data integrity and constraint testing
+
+#### White Box Testing (`tests/backend/whitebox/`)
+
+**Unit Testing** (`test_unit_simple.py`):
+
+- Service layer testing with mocking
+- Code coverage analysis
+- Internal logic validation using `pytest-mock`
+
+#### Integration Testing (`test_integration_simple.py`)
+
+- Multi-service integration testing
+- End-to-end workflow validation
+- Performance testing
+
+#### Running Backend Tests
+
+```bash
+# Simple test runner
+python run_backend_tests.py --all                    # All backend tests
+python run_backend_tests.py --api                    # API tests only
+python run_backend_tests.py --database               # Database tests only
+python run_backend_tests.py --unit                   # Unit tests only
+python run_backend_tests.py --integration            # Integration tests only
+python run_backend_tests.py --security               # Security scan
+
+# Direct pytest commands
+pytest tests/backend/ -v --cov=tests/backend --cov-report=html
+```
+
+#### Essential Packages Used
+
+- **Factory Boy**: Automatic test data generation
+- **Faker**: Realistic fake data
+- **Responses**: HTTP request mocking
+- **pytest-mock**: Function mocking
+- **pytest-cov**: Code coverage analysis
+- **Bandit**: Security vulnerability scanning
 
 ## Running Tests
 
@@ -305,6 +379,7 @@ locust -f tests/performance/locustfile.py --host=https://your-website.com
 ### Setting up CI/CD
 
 1. **GitHub Secrets Configuration**:
+
    ```bash
    # Required secrets for the CI/CD pipeline:
    DOCKER_USERNAME=your-docker-hub-username
@@ -312,6 +387,7 @@ locust -f tests/performance/locustfile.py --host=https://your-website.com
    ```
 
 2. **Branch Protection Rules**:
+
    - Enable branch protection for `main` branch
    - Require status checks to pass before merging
    - Require pull request reviews
